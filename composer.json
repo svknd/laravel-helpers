@@ -1,0 +1,19 @@
+{
+    "name": "svknd/laravel-helpers",
+    "description": "Laravel Helpers Package",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Irvan Maulana",
+            "email": "me@tukangremot.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "Svknd\\Laravel\\Helpers\\": "src/"
+        }
+    },
+    "require": {
+    }
+}
