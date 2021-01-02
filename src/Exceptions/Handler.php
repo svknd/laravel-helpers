@@ -3,26 +3,40 @@
 namespace Svknd\Laravel\Helpers\Exceptions;
 
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
 use Throwable;
 
 class Handler extends ExceptionHandler
 {
     protected $validationMessage = null;
+    protected $modelNotFoundnMessage = null;
 
-    public function render($request, Throwable $exception)
+    public function render($request, Throwable $e)
     {
-        if ($exception instanceof ValidationException && $exception->getResponse()) {
+        if ($e instanceof HttpResponseException) {
+            return $e->getResponse();
+        } elseif ($e instanceof ModelNotFoundException) {
             return response()->json([
                 'success' => false,
-                'status' => 422,
-                'message' => $this->validationMessage ? $this->validationMessage :  __($exception->getMessage()),
+                'message' => $this->modelNotFoundnMessage ? $this->modelNotFoundnMessage :  __($e->getMessage()),
+            ], 404);
+        } elseif ($e instanceof AuthorizationException) {
+            $e = new HttpException(403, $e->getMessage());
+        } elseif ($e instanceof ValidationException && $e->getResponse()) {
+            return response()->json([
+                'success' => false,
+                'message' => $this->validationMessage ? $this->validationMessage :  __($e->getMessage()),
                 'data' => [
-                    'fields' => $exception->errors()
+                    'fields' => $e->errors()
                 ]
             ], 422);
+        } elseif ($e instanceof ModelNotFoundException) {            
+            $e = new NotFoundHttpException($e->getMessage(), $e);
         }
 
-        return parent::render($request, $exception);
+        return parent::render($request, $e);
     }
 }
