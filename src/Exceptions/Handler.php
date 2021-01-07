@@ -12,7 +12,7 @@ use Throwable;
 class Handler extends ExceptionHandler
 {
     protected $validationMessage = null;
-    protected $modelNotFoundnMessage = null;
+    protected $modelNotFoundMessage = null;
 
     public function render($request, Throwable $e)
     {
@@ -21,7 +21,7 @@ class Handler extends ExceptionHandler
         } elseif ($e instanceof ModelNotFoundException) {
             return response()->json([
                 'success' => false,
-                'message' => $this->modelNotFoundnMessage ? $this->modelNotFoundnMessage :  __($e->getMessage()),
+                'message' => $this->$modelNotFoundMessage ? $this->$modelNotFoundMessage :  __($e->getMessage()),
             ], 404);
         } elseif ($e instanceof AuthorizationException) {
             $e = new HttpException(403, $e->getMessage());
