@@ -38,7 +38,7 @@ class Handler extends ExceptionHandler
         } else {            
             return response()->json([
                 'success' => false,
-                'message' => config('app.debug') ? $th->getMessage() : __('error.500'),
+                'message' => config('app.debug') ? $e->getMessage() : __('error.500'),
             ], 500);
         }
 
